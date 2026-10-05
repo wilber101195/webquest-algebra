@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WebQuest · El álgebra en nuestro entorno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2F5FC;
+    --card:#FFFFFF;
+    --ink:#15183A;
+    --ink-soft:#4C5272;
+    --ink-faint:#7A80A0;
+    --brand:#2E2F86;      /* coeficiente / estructura */
+    --brand-2:#5A5ED8;
+    --amber:#EE9F17;      /* variable */
+    --amber-soft:#FDF2DC;
+    --teal:#0E8C86;       /* constante / comprobación */
+    --teal-soft:#DFF2F0;
+    --line:#DEE3F2;
+    --shadow:0 1px 2px rgba(21,24,58,.04), 0 8px 24px -12px rgba(21,24,58,.18);
+
+    --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Fraunces",Georgia,"Times New Roman",serif;
+    --mono:"Space Mono","SFMono-Regular",Consolas,monospace;
+
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
+  body{
+    margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--serif);line-height:1.12;font-weight:600;letter-spacing:-.01em;margin:0}
+  p{margin:0 0 1em}
+  a{color:var(--brand);text-underline-offset:3px}
+  .wrap{max-width:980px;margin:0 auto;padding:0 22px}
+
+  /* ---------- Header / nav ---------- */
+  header.site{
+    position:sticky;top:0;z-index:50;background:rgba(242,245,252,.86);
+    backdrop-filter:saturate(1.3) blur(10px);border-bottom:1px solid var(--line);
+    padding-top:env(safe-area-inset-top,0px);
+  }
+  .bar{display:flex;align-items:center;gap:14px;height:68px}
+  .mark{display:flex;align-items:center;gap:11px;font-family:var(--serif);font-weight:600;font-size:1.02rem;white-space:nowrap}
+  .glyph{
+    width:36px;height:36px;border-radius:10px;flex:none;
+    background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;
+    display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:1.15rem;
+    box-shadow:0 6px 14px -6px rgba(46,47,134,.6)
+  }
+  .mark small{display:block;font-family:var(--sans);font-weight:500;font-size:.72rem;color:var(--ink-faint);letter-spacing:.02em}
+  nav.tabs{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{
+    font-family:var(--sans);font-size:.86rem;font-weight:500;color:var(--ink-soft);
+    background:none;border:0;padding:9px 13px;border-radius:9px;cursor:pointer;white-space:nowrap;
+    display:flex;align-items:center;gap:7px;transition:background .15s,color .15s
+  }
+  nav.tabs button .n{font-family:var(--mono);font-size:.74rem;color:var(--ink-faint)}
+  nav.tabs button:hover{background:#E6EAF6;color:var(--ink)}
+  nav.tabs button.active{background:var(--brand);color:#fff}
+  nav.tabs button.active .n{color:rgba(255,255,255,.65)}
+  .progress{height:3px;background:var(--line)}
+  .progress>i{display:block;height:100%;width:16.6%;background:linear-gradient(90deg,var(--amber),var(--brand-2));transition:width .4s cubic-bezier(.2,.7,.2,1)}
+
+  /* ---------- sections ---------- */
+  main{padding:0 0 90px}
+  .panel{display:none}
+  .panel.active{display:block;animation:in .45s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .eyebrow{font-family:var(--mono);font-size:.76rem;color:var(--brand-2);letter-spacing:.04em;margin-bottom:10px}
+  .lead{font-size:1.12rem;color:var(--ink-soft);max-width:70ch}
+
+  /* ---------- hero ---------- */
+  .hero{padding:52px 0 40px}
+  .hero h1{font-size:clamp(2.1rem,6vw,3.5rem);max-width:17ch}
+  .hero .role{
+    display:inline-flex;align-items:center;gap:9px;background:var(--amber-soft);
+    color:#8a5e00;border:1px solid #f1d79a;border-radius:999px;padding:7px 15px;
+    font-weight:600;font-size:.88rem;margin-bottom:22px
+  }
+  .role .dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+  .driving{
+    margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:26px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden
+  }
+  .driving::before{content:"?";position:absolute;right:-18px;top:-40px;font-family:var(--serif);font-size:200px;color:#F0F2FA;z-index:0;line-height:1}
+  .driving .k{position:relative;font-family:var(--mono);font-size:.74rem;color:var(--teal);letter-spacing:.04em;margin-bottom:8px}
+  .driving q{position:relative;display:block;font-family:var(--serif);font-size:clamp(1.3rem,3.6vw,1.9rem);font-weight:500;quotes:"“" "”"}
+
+  /* ---------- live algebra widget ---------- */
+  .lab{margin-top:34px;background:linear-gradient(160deg,#1c1e52,#2e2f86);border-radius:20px;color:#fff;overflow:hidden;box-shadow:0 20px 50px -24px rgba(28,30,82,.8)}
+  .lab-head{padding:22px 26px 6px}
+  .lab-head h3{color:#fff;font-size:1.25rem}
+  .lab-head p{color:rgba(255,255,255,.7);font-size:.92rem;margin:.4em 0 0;max-width:52ch}
+  .lab-body{padding:20px 26px 26px;display:grid;grid-template-columns:1.1fr .9fr;gap:26px}
+  .expr{font-family:var(--mono);font-size:clamp(1.4rem,4.3vw,2rem);font-weight:700;letter-spacing:-.01em;line-height:1.5;margin:6px 0 2px}
+  .t-coef{color:#b9bcff}.t-var{color:var(--amber)}.t-const{color:#5fded6}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.78rem;color:rgba(255,255,255,.72);margin-top:4px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .control{margin-top:22px}
+  .control label{display:flex;justify-content:space-between;font-size:.85rem;color:rgba(255,255,255,.85);margin-bottom:8px}
+  .control label b{font-family:var(--mono);color:var(--amber)}
+  input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:rgba(255,255,255,.18);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--amber);cursor:pointer;border:4px solid #2e2f86;box-shadow:0 0 0 1px var(--amber)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border:4px solid #2e2f86;border-radius:50%;background:var(--amber);cursor:pointer}
+  .result{margin-top:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:16px 18px}
+  .result .sub{font-family:var(--mono);font-size:.95rem;color:rgba(255,255,255,.8);word-break:break-word}
+  .result .total{font-family:var(--serif);font-size:2rem;font-weight:600;margin-top:4px}
+  .result .total small{font-size:.85rem;color:rgba(255,255,255,.6);font-family:var(--sans);font-weight:500}
+  .vtable{width:100%;border-collapse:collapse;font-size:.85rem;align-self:start}
+  .vtable caption{text-align:left;font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:8px;font-family:var(--mono)}
+  .vtable th,.vtable td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.12)}
+  .vtable th{color:rgba(255,255,255,.6);font-weight:500;font-size:.72rem}
+  .vtable td{font-family:var(--mono)}
+  .vtable tr.on td{background:rgba(238,159,23,.16)}
+  .vtable td.r{color:#5fded6;font-weight:700}
+
+  /* ---------- generic content blocks ---------- */
+  section.block{padding:34px 0;border-top:1px solid var(--line)}
+  section.block:first-of-type{border-top:0}
+  h2.sec{font-size:clamp(1.5rem,4vw,2.1rem);margin-bottom:6px}
+  h3.sub{font-size:1.2rem;margin:26px 0 10px}
+
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .card h4{font-size:1.02rem;margin-bottom:6px;font-family:var(--sans);font-weight:700}
+  .card p{font-size:.92rem;color:var(--ink-soft);margin:0}
+
+  ul.clean,ol.clean{margin:0 0 1em;padding-left:1.2em}
+  ul.clean li,ol.clean li{margin:.35em 0;color:var(--ink-soft)}
+  ul.ask{list-style:none;padding:0;margin:0}
+  ul.ask li{position:relative;padding:9px 0 9px 30px;border-bottom:1px dashed var(--line);color:var(--ink-soft);font-size:.95rem}
+  ul.ask li::before{content:"?";position:absolute;left:0;top:8px;width:20px;height:20px;background:var(--amber-soft);color:#8a5e00;border-radius:6px;display:grid;place-items:center;font-family:var(--mono);font-size:.78rem;font-weight:700}
+
+  .tag{display:inline-block;font-family:var(--mono);font-size:.72rem;padding:3px 9px;border-radius:7px;font-weight:700}
+  .tag.var{background:var(--amber-soft);color:#8a5e00}
+  .tag.const{background:var(--teal-soft);color:#0a6763}
+  .tag.coef{background:#E7E8FB;color:var(--brand)}
+
+  /* activity / step cards */
+  .act{display:flex;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+  .act .num{flex:none;width:40px;height:40px;border-radius:11px;background:var(--brand);color:#fff;font-family:var(--mono);font-weight:700;display:grid;place-items:center;font-size:1.05rem}
+  .act h4{font-family:var(--sans);font-weight:700;font-size:1.05rem;margin:4px 0 6px}
+  .act p{font-size:.93rem;color:var(--ink-soft);margin:0 0 .5em}
+
+  /* roles */
+  .role-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);border-top:3px solid var(--brand-2)}
+  .role-card h4{font-family:var(--sans);font-weight:700;font-size:1rem;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .role-card .ic{font-size:1.1rem}
+  .role-card p{font-size:.88rem;color:var(--ink-soft);margin:0}
+
+  /* accordion etapas */
+  .acc{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);margin-bottom:12px;box-shadow:var(--shadow)}
+  .acc>button{width:100%;text-align:left;background:none;border:0;padding:17px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:var(--sans);font-size:1rem;font-weight:600;color:var(--ink)}
+  .acc>button .step{flex:none;width:30px;height:30px;border-radius:9px;background:var(--teal-soft);color:#0a6763;font-family:var(--mono);font-weight:700;display:grid;place-items:center;font-size:.85rem}
+  .acc>button .chev{margin-left:auto;transition:transform .25s;color:var(--ink-faint)}
+  .acc.open>button .chev{transform:rotate(180deg)}
+  .acc .body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .acc.open .body{max-height:900px}
+  .acc .body-in{padding:0 20px 20px 64px}
+  .acc .body-in p{font-size:.93rem;color:var(--ink-soft)}
+  .prod{margin-top:10px;background:var(--amber-soft);border:1px solid #f1d79a;border-radius:10px;padding:11px 14px;font-size:.88rem;color:#7a5300}
+  .prod b{color:#8a5e00}
+
+  /* route flow */
+  .route{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px}
+  .route .chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.84rem;font-weight:600;color:var(--brand)}
+  .route .arr{color:var(--ink-faint);font-family:var(--mono)}
+
+  /* resources */
+  .res{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow);height:100%}
+  .res .rtag{font-family:var(--mono);font-size:.72rem;color:var(--brand-2);margin-bottom:8px}
+  .res h4{font-family:var(--sans);font-weight:700;font-size:1.02rem;margin-bottom:6px}
+  .res p{font-size:.88rem;color:var(--ink-soft);flex:1}
+  .res a.go{margin-top:12px;display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:.88rem;text-decoration:none;color:#fff;background:var(--brand);padding:9px 14px;border-radius:9px;align-self:flex-start;transition:background .15s}
+  .res a.go:hover{background:var(--brand-2)}
+
+  /* tables */
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
+  table.data{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}
+  table.data th,table.data td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  table.data thead th{background:#EDEFFA;color:var(--brand);font-weight:700;font-size:.82rem}
+  table.data tbody tr:last-child td{border-bottom:0}
+  table.data td b{color:var(--ink)}
+
+  /* rubric calculator */
+  .calc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+  .crit{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+  .crit:last-of-type{border-bottom:0}
+  .crit .cl{font-size:.92rem;font-weight:600}
+  .crit .cw{font-family:var(--mono);font-size:.74rem;color:var(--ink-faint);font-weight:400}
+  .levels{display:flex;gap:6px}
+  .levels button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;font-family:var(--mono);font-weight:700;color:var(--ink-soft);cursor:pointer;transition:.12s}
+  .levels button:hover{border-color:var(--brand-2)}
+  .levels button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .calc-out{margin-top:18px;background:linear-gradient(160deg,#0e8c86,#0a6763);color:#fff;border-radius:13px;padding:18px 20px;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  .calc-out .big{font-family:var(--serif);font-size:2.4rem;font-weight:600;line-height:1}
+  .calc-out .fx{font-family:var(--mono);font-size:.82rem;color:rgba(255,255,255,.75)}
+
+  blockquote.quote{margin:18px 0;padding:18px 22px;background:var(--card);border-left:4px solid var(--amber);border-radius:0 12px 12px 0;box-shadow:var(--shadow);font-family:var(--serif);font-size:1.12rem;font-weight:500;color:var(--ink)}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;color:var(--ink-faint);font-size:.82rem;text-align:center}
+
+  @media(max-width:760px){
+    .lab-body{grid-template-columns:1fr}
+    .g2,.g3{grid-template-columns:1fr}
+    .mark small{display:none}
+    .bar{height:60px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap bar">
+    <div class="mark">
+      <div class="glyph">x</div>
+      <div>El álgebra en nuestro entorno<small>WebQuest · Investigación matemática</small></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Secciones de la WebQuest">
+      <button class="active" data-go="introduccion"><span class="n">1</span>Introducción</button>
+      <button data-go="tareas"><span class="n">2</span>Tareas</button>
+      <button data-go="proceso"><span class="n">3</span>Proceso</button>
+      <button data-go="recursos"><span class="n">4</span>Recursos</button>
+      <button data-go="evaluacion"><span class="n">5</span>Evaluación</button>
+      <button data-go="conclusiones"><span class="n">6</span>Conclusiones</button>
+    </nav>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ 1. INTRODUCCIÓN ============ -->
+<div class="panel active" id="introduccion">
+  <div class="hero">
+    <div class="role"><span class="dot"></span>Tu rol: investigador matemático</div>
+    <h1>Representar para comprender nuestro entorno.</h1>
+    <p class="lead" style="margin-top:18px">En la vida diaria relacionamos cantidades que cambian con otras que permanecen fijas: el costo de una compra, los materiales de un proyecto, el ahorro de varias semanas. El álgebra nos deja pasar de las <em>palabras</em> a una <em>representación matemática</em> para analizar y decidir.</p>
+
+    <div class="driving">
+      <div class="k">PREGUNTA QUE ORIENTA LA INVESTIGACIÓN</div>
+      <q>¿Cómo podemos utilizar el lenguaje algebraico para representar situaciones de nuestro entorno y tomar decisiones fundamentadas?</q>
+    </div>
+
+    <!-- interactivo -->
+    <div class="lab">
+      <div class="lab-head">
+        <h3>Prueba una expresión en vivo</h3>
+        <p>Compras varios cuadernos del mismo precio y pagas además una carpeta. Mueve la cantidad y observa cómo cambia el total: eso es, exactamente, una expresión algebraica funcionando.</p>
+      </div>
+      <div class="lab-body">
+        <div>
+          <div class="expr">
+            P = <span class="t-coef">3.500</span>·<span class="t-var" id="xlbl">n</span> + <span class="t-const">8.000</span>
+          </div>
+          <div class="legend">
+            <span><i style="background:#b9bcff"></i>coeficiente · precio por cuaderno</span>
+            <span><i style="background:var(--amber)"></i>variable · n cuadernos</span>
+            <span><i style="background:#5fded6"></i>constante · carpeta</span>
+          </div>
+          <div class="control">
+            <label>Número de cuadernos (n) <b id="nval">3</b></label>
+            <input type="range" id="n" min="1" max="12" value="3" aria-label="Número de cuadernos">
+          </div>
+          <div class="result">
+            <div class="sub" id="sub">P = 3.500 · 3 + 8.000</div>
+            <div class="total">$ <span id="tot">18.500</span> <small>costo total</small></div>
+          </div>
+        </div>
+        <table class="vtable" id="vt">
+          <caption>Tabla de comprobación</caption>
+          <thead><tr><th>n</th><th>P = 3.500·n + 8.000</th><th>Total</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2 class="sec">¿Qué aprenderás?</h2>
+    <p class="lead">No existe una única situación que responda la pregunta. A lo largo de la WebQuest tendrás que <b>investigar, interpretar, proponer, comprobar y argumentar</b> para construir tu propia respuesta.</p>
+    <div class="grid g2" style="margin-top:20px">
+      <div class="card"><h4>Reconocer los elementos</h4><p>Distinguir la función de variables, constantes, coeficientes y términos dentro de una expresión.</p></div>
+      <div class="card"><h4>Traducir situaciones</h4><p>Pasar del lenguaje cotidiano al lenguaje algebraico y construir expresiones a partir de contextos reales.</p></div>
+      <div class="card"><h4>Comprobar el modelo</h4><p>Usar tablas y distintos valores para verificar si una representación describe bien el problema.</p></div>
+      <div class="card"><h4>Explicar y argumentar</h4><p>Decir con palabras qué significa una expresión y por qué es adecuada para la situación.</p></div>
+    </div>
+    <blockquote class="quote">Al finalizar verás cómo las matemáticas se convierten en una herramienta para comprender situaciones reales, analizar alternativas y fundamentar decisiones.</blockquote>
+  </section>
+</div>
+
+<!-- ============ 2. TAREAS ============ -->
+<div class="panel" id="tareas">
+  <section class="block">
+    <div class="eyebrow">EL RETO</div>
+    <h2 class="sec">Descubrir el álgebra en una situación real</h2>
+    <p class="lead">Trabajarás en un equipo de cuatro estudiantes. Cada equipo investigará, analizará y representará matemáticamente una situación en la que una cantidad depende de otra.</p>
+    <div class="driving" style="margin-top:22px">
+      <div class="k">PREGUNTA CENTRAL DEL RETO</div>
+      <q>¿Cómo podemos representar mediante una expresión algebraica una situación de nuestro entorno y usarla para comprenderla y tomar una decisión?</q>
+    </div>
+    <p style="margin-top:20px">El producto será un <b>Informe de Investigación Algebraica</b> acompañado de una presentación breve ante el grupo.</p>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Las cinco actividades</h3>
+    <div class="act"><div class="num">1</div><div>
+      <h4>Analizamos el problema</h4>
+      <p>Antes de calcular, comprendan la situación: ¿qué información se conoce?, ¿qué cantidad cambia?, ¿cuál permanece constante?, ¿qué relación existe? El objetivo es formular una <b>primera hipótesis</b>.</p>
+    </div></div>
+    <div class="act"><div class="num">2</div><div>
+      <h4>Investigamos el lenguaje del álgebra</h4>
+      <p>Construyan un <b>diccionario algebraico propio</b> con sus palabras para: <span class="tag var">variable</span> <span class="tag const">constante</span> <span class="tag coef">coeficiente</span> <span class="tag coef">término</span> <span class="tag coef">expresión</span>. Cada concepto con explicación, ejemplo, representación y cómo lo identificaron.</p>
+    </div></div>
+    <div class="act"><div class="num">3</div><div>
+      <h4>Del lenguaje cotidiano al algebraico</h4>
+      <p>Traduzcan situaciones en palabras a expresiones. Por ejemplo: <em>“compra varios cuadernos del mismo precio y paga una cantidad fija por una carpeta”</em>. Identifiquen variable, constante, coeficiente, expresión y cómo comprobarla.</p>
+    </div></div>
+    <div class="act"><div class="num">4</div><div>
+      <h4>Comprobamos nuestra representación</h4>
+      <p>Prueben el modelo con distintos valores de la variable y construyan una tabla con las columnas: <em>valor · expresión · resultado · interpretación</em>. Analicen si el resultado tiene sentido en la situación real.</p>
+    </div></div>
+    <div class="act"><div class="num">5</div><div>
+      <h4>Investigamos una situación de nuestro entorno</h4>
+      <p>Actividad principal: elijan un contexto cercano (compras, ahorro, transporte, deporte, agricultura, pesca, comercio, un evento…) y construyan una representación algebraica propia que les permita obtener información y <b>tomar una decisión</b>.</p>
+    </div></div>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Producto final · Informe de Investigación Algebraica</h3>
+    <div class="scroll">
+      <table class="data">
+        <thead><tr><th>Parte</th><th>Qué debe contener</th></tr></thead>
+        <tbody>
+          <tr><td><b>1. Título</b></td><td>Relacionado con la situación estudiada.</td></tr>
+          <tr><td><b>2. Situación problema</b></td><td>Descripción clara de lo investigado.</td></tr>
+          <tr><td><b>3. Información recopilada</b></td><td>Datos relevantes para construir la representación.</td></tr>
+          <tr><td><b>4. Análisis de cantidades</b></td><td>Variables, constantes y demás elementos algebraicos.</td></tr>
+          <tr><td><b>5. Modelo algebraico</b></td><td>Expresión construida por el equipo.</td></tr>
+          <tr><td><b>6. Comprobación</b></td><td>Tabla o procedimiento de verificación.</td></tr>
+          <tr><td><b>7. Interpretación</b></td><td>Qué representa la expresión, en lenguaje cotidiano.</td></tr>
+          <tr><td><b>8. Conclusión</b></td><td>Respuesta argumentada a la pregunta del reto.</td></tr>
+          <tr><td><b>9. Reflexión del equipo</b></td><td>Qué aprendieron, qué dificultad hallaron y cómo la resolvieron.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prod" style="margin-top:16px"><b>Presentación:</b> cada equipo dispone de 5 a 7 minutos. No se evalúa solo si la expresión es correcta, sino la capacidad de investigar, explicar decisiones, comprobar, argumentar y relacionar el álgebra con una situación real.</div>
+  </section>
+</div>
+
+<!-- ============ 3. PROCESO ============ -->
+<div class="panel" id="proceso">
+  <section class="block">
+    <div class="eyebrow">CÓMO REALIZAREMOS LA INVESTIGACIÓN</div>
+    <h2 class="sec">Seis etapas, un equipo de cuatro</h2>
+    <p class="lead">Cada integrante tiene una responsabilidad específica, pero las decisiones matemáticas se construyen y revisan en conjunto.</p>
+
+    <h3 class="sub">Organización del equipo</h3>
+    <div class="grid g2">
+      <div class="role-card"><h4><span class="ic">🧭</span>Coordinador/a</h4><p>Organiza el trabajo, distribuye tareas y verifica que el equipo avance según las etapas.</p></div>
+      <div class="role-card"><h4><span class="ic">🔍</span>Investigador/a</h4><p>Consulta los recursos, selecciona información relevante y registra las fuentes utilizadas.</p></div>
+      <div class="role-card"><h4><span class="ic">📐</span>Analista matemático/a</h4><p>Identifica cantidades, propone la representación algebraica y comprueba los resultados.</p></div>
+      <div class="role-card"><h4><span class="ic">🗣️</span>Comunicador/a</h4><p>Organiza las conclusiones y prepara la presentación final del equipo.</p></div>
+    </div>
+    <div class="prod" style="margin-top:14px"><b>Importante:</b> los roles organizan el trabajo, pero todos participan en la discusión, construcción y revisión de la solución.</div>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Las etapas <span style="font-size:.8rem;color:var(--ink-faint);font-family:var(--sans);font-weight:400">— toca cada una para ver su producto</span></h3>
+
+    <div class="acc"><button><span class="step">1</span>Comprendemos el reto<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Relean la pregunta central y analicen la situación inicial del docente: qué información hay, qué cantidades aparecen, cuáles cambian, cuáles son constantes y qué relación existe.</p>
+        <div class="prod"><b>Producto:</b> una hipótesis inicial sobre cómo representar la situación. No tiene que ser correcta desde el comienzo; lo importante es justificarla y luego comprobarla.</div>
+      </div></div>
+    </div>
+    <div class="acc"><button><span class="step">2</span>Descubrimos el lenguaje algebraico<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Investiguen variable, constante, coeficiente, término y expresión. Pregunta orientadora: <em>¿por qué necesitamos letras para representar algunas cantidades?</em> No copien definiciones.</p>
+        <div class="prod"><b>Producto:</b> un diccionario algebraico del equipo con concepto, explicación propia, ejemplo, representación e interpretación.</div>
+      </div></div>
+    </div>
+    <div class="acc"><button><span class="step">3</span>Traducimos y representamos<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Para cada situación: identificar cantidades → identificar la variable → identificar las constantes → establecer la relación → construir la expresión → explicarla → comprobar con valores concretos.</p>
+        <div class="prod"><b>Producto:</b> una ficha de análisis algebraico por cada situación estudiada.</div>
+      </div></div>
+    </div>
+    <div class="acc"><button><span class="step">4</span>Ponemos a prueba nuestro modelo<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Usen diferentes valores de la variable, construyan una tabla y analicen: ¿qué pasa cuando aumenta?, ¿tiene sentido el resultado?, ¿tuvimos que modificar la expresión inicial?</p>
+        <div class="prod"><b>Producto:</b> tabla de comprobación con una explicación escrita: <em>¿cómo sabemos que la expresión representa correctamente la situación?</em></div>
+      </div></div>
+    </div>
+    <div class="acc"><button><span class="step">5</span>Realizamos nuestra propia investigación<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Etapa central: seleccionar la situación → recopilar información (distinguir relevante de secundaria) → formular la pregunta matemática → construir el modelo → comprobarlo → interpretar → concluir.</p>
+        <div class="prod"><b>Producto:</b> la investigación completa del equipo, lista para convertirse en informe.</div>
+      </div></div>
+    </div>
+    <div class="acc"><button><span class="step">6</span>Comunicamos nuestros resultados<span class="chev">▾</span></button>
+      <div class="body"><div class="body-in">
+        <p>Organicen la información en el Informe y preparen una presentación de 5 a 7 minutos: situación, pregunta, información, variable y constantes, expresión, comprobación, interpretación, conclusión y aprendizaje. Los demás equipos formulan al menos una pregunta matemática.</p>
+        <div class="prod"><b>Producto:</b> Informe de Investigación Algebraica + presentación final.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Ruta de trabajo</h3>
+    <div class="route">
+      <span class="chip">Comprender</span><span class="arr">→</span>
+      <span class="chip">Investigar</span><span class="arr">→</span>
+      <span class="chip">Identificar</span><span class="arr">→</span>
+      <span class="chip">Representar</span><span class="arr">→</span>
+      <span class="chip">Comprobar</span><span class="arr">→</span>
+      <span class="chip">Interpretar</span><span class="arr">→</span>
+      <span class="chip">Argumentar</span><span class="arr">→</span>
+      <span class="chip">Comunicar</span><span class="arr">→</span>
+      <span class="chip">Reflexionar</span>
+    </div>
+    <p style="margin-top:12px;color:var(--ink-soft)">No avances a la siguiente etapa hasta completar el producto de la anterior.</p>
+
+    <h3 class="sub">¿Dificultades para construir la expresión?</h3>
+    <p style="color:var(--ink-soft)">No busques una respuesta para copiar. Sigue estas preguntas de ayuda:</p>
+    <ul class="ask">
+      <li>¿Qué cantidades aparecen en la situación?</li>
+      <li>¿Cuál de ellas puede cambiar? ¿Cuál permanece fija?</li>
+      <li>¿Qué sucede cuando cambia la variable?</li>
+      <li>¿Podemos representar primero con números y organizarlos en una tabla?</li>
+      <li>¿Qué patrón encontramos y cómo lo expresamos con una letra?</li>
+    </ul>
+    <div class="prod" style="margin-top:14px"><b>El docente</b> actúa como orientador y mediador: formula preguntas, ayuda a interpretar información y a detectar errores, pero no entrega las respuestas de inmediato.</div>
+  </section>
+</div>
+
+<!-- ============ 4. RECURSOS ============ -->
+<div class="panel" id="recursos">
+  <section class="block">
+    <div class="eyebrow">RECURSOS PARA NUESTRA INVESTIGACIÓN</div>
+    <h2 class="sec">Consúltalos en orden</h2>
+    <p class="lead">Primero los que ayudan a comprender los conceptos; después los que facilitan explorar y comprobar.</p>
+
+    <div class="grid g2" style="margin-top:22px">
+      <div class="res">
+        <div class="rtag">RECURSO 1 · Colombia Aprende</div>
+        <h4>Expresiones algebraicas</h4>
+        <p>Video clase interactiva para reconocer los elementos de una expresión. Útil en la Etapa 2.</p>
+        <a class="go" href="https://www.colombiaaprende.edu.co/recurso-coleccion/expresiones-algebraicas" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+      <div class="res">
+        <div class="rtag">RECURSO 2 · Colombia Aprende</div>
+        <h4>Introducción al álgebra y partes de un monomio</h4>
+        <p>Video educativo con ejemplos prácticos. Material de consulta para el diccionario algebraico.</p>
+        <a class="go" href="https://redaprende.colombiaaprende.edu.co/metadatos/recurso/introduccion-al-algebra-expresiones-algebraicas-y-/" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+      <div class="res">
+        <div class="rtag">RECURSO 3 · Khan Academy</div>
+        <h4>Variables y expresiones</h4>
+        <p>Partes de las expresiones, evaluación y escritura a partir de situaciones. Con práctica. Etapas 2 y 3.</p>
+        <a class="go" href="https://es.khanacademy.org/kmap/operations-and-algebraic-thinking-g/oat220-variables-expressions" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+      <div class="res">
+        <div class="rtag">RECURSO 4 · Khan Academy</div>
+        <h4>Escribir expresiones con variables</h4>
+        <p>Identificar palabras clave y transformarlas en expresiones. Especial para la Etapa 3.</p>
+        <a class="go" href="https://es.khanacademy.org/math/eb-2-secundaria/eb-expresiones-algebraicas/v/writing-expressions-1" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+      <div class="res">
+        <div class="rtag">RECURSO 5 · GeoGebra</div>
+        <h4>Expresiones matemáticas</h4>
+        <p>Actividades interactivas (6.º–8.º) para identificar términos, factores, variables y coeficientes. Construir y comprobar.</p>
+        <a class="go" href="https://www.geogebra.org/math/expressions?lang=es-ES" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+      <div class="res">
+        <div class="rtag">RECURSO 6 · Colombia Aprende</div>
+        <h4>Colección de Matemáticas</h4>
+        <p>Biblioteca digital para ampliar y contrastar información. Fuente complementaria.</p>
+        <a class="go" href="https://movil.colombiaaprende.edu.co/coleccion/1003-matematicas" target="_blank" rel="noopener">Abrir recurso ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">¿Qué recurso usar en cada etapa?</h3>
+    <div class="scroll">
+      <table class="data">
+        <thead><tr><th>Etapa</th><th>Recurso recomendado</th><th>Propósito</th></tr></thead>
+        <tbody>
+          <tr><td>1. Comprendemos el reto</td><td>Colombia Aprende</td><td>Reconocer el contexto algebraico</td></tr>
+          <tr><td>2. Descubrimos el lenguaje</td><td>Colombia Aprende + Khan Academy</td><td>Comprender conceptos</td></tr>
+          <tr><td>3. Traducimos y representamos</td><td>Khan Academy</td><td>Pasar del lenguaje cotidiano al algebraico</td></tr>
+          <tr><td>4. Ponemos a prueba el modelo</td><td>GeoGebra + tablas propias</td><td>Explorar y comprobar</td></tr>
+          <tr><td>5. Investigación propia</td><td>Todos los recursos</td><td>Contrastar y seleccionar información</td></tr>
+          <tr><td>6. Comunicación</td><td>Recursos consultados</td><td>Sustentar las conclusiones</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sub">Criterios para seleccionar información</h3>
+    <div class="grid g3">
+      <div class="card"><h4>Pertinencia</h4><p>¿Esta información realmente ayuda a responder nuestra pregunta?</p></div>
+      <div class="card"><h4>Confiabilidad</h4><p>Prioricen recursos educativos, institucionales y plataformas reconocidas.</p></div>
+      <div class="card"><h4>Comprensión</h4><p>No incorporen información que no puedan explicar con sus propias palabras.</p></div>
+    </div>
+    <blockquote class="quote">Investigar no es copiar. Investigar es buscar, seleccionar, comprender, relacionar y usar información para construir una respuesta.</blockquote>
+    <div class="prod"><b>Registro de fuentes:</b> anoten en el informe cada recurso con <em>qué información obtuvieron</em> y <em>cómo la utilizaron</em>.</div>
+  </section>
+</div>
+
+<!-- ============ 5. EVALUACIÓN ============ -->
+<div class="panel" id="evaluacion">
+  <section class="block">
+    <div class="eyebrow">EVALUACIÓN FORMATIVA Y CRITERIAL</div>
+    <h2 class="sec">¿Cómo será evaluado el trabajo?</h2>
+    <p class="lead">Se valora el producto (Informe + presentación) y el proceso (participación, colaboración, investigación y reflexión). No solo la respuesta matemática.</p>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Calculadora de la rúbrica <span style="font-size:.8rem;color:var(--ink-faint);font-family:var(--sans);font-weight:400">— asigna 1 a 4 a cada criterio</span></h3>
+    <p style="color:var(--ink-soft);font-size:.92rem">La nota final es una suma ponderada: cada criterio aporta según su peso. <span class="tag coef">esto también es una expresión algebraica</span></p>
+    <div class="calc" id="calc" style="margin-top:14px">
+      <!-- rows injected by JS -->
+      <div class="calc-out">
+        <div><div class="big"><span id="score">0.0</span> / 5.0</div><div class="fx" id="fx">asigna un nivel a cada criterio</div></div>
+        <div style="text-align:right"><div class="big" id="pct">0%</div><div class="fx">equivalente</div></div>
+      </div>
+    </div>
+    <p style="color:var(--ink-faint);font-size:.82rem;margin-top:10px">Niveles: <b>4</b> Excelente · <b>3</b> Satisfactorio · <b>2</b> En proceso · <b>1</b> Inicial. La escala 1–5 es orientativa y la define el docente.</p>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Rúbrica · descriptores por nivel</h3>
+    <div class="scroll">
+      <table class="data">
+        <thead><tr><th>Criterio</th><th>4 · Excelente</th><th>3 · Satisfactorio</th><th>2 · En proceso</th><th>1 · Inicial</th></tr></thead>
+        <tbody>
+          <tr><td><b>Investigación y selección</b></td><td>Consulta fuentes pertinentes y confiables; usa la información de forma crítica.</td><td>Consulta fuentes adecuadas y usa información relevante.</td><td>Pocas fuentes o información poco relacionada.</td><td>Poca evidencia; copia sin analizar.</td></tr>
+          <tr><td><b>Lenguaje algebraico</b></td><td>Identifica y explica todos los elementos con ejemplos propios.</td><td>Identifica los principales elementos y los explica.</td><td>Reconoce algunos, con confusiones.</td><td>Dificultades para identificarlos.</td></tr>
+          <tr><td><b>Modelo algebraico</b></td><td>Expresión adecuada, explica cada elemento y cómo representa la situación.</td><td>Expresión adecuada y explica su relación con la situación.</td><td>Errores o explicación incompleta.</td><td>No logra una expresión que represente la situación.</td></tr>
+          <tr><td><b>Comprobación e interpretación</b></td><td>Comprueba con varios valores, analiza y concluye con justificación.</td><td>Comprueba e interpreta correctamente.</td><td>Comprobación parcial o interpretación difícil.</td><td>No comprueba ni interpreta.</td></tr>
+          <tr><td><b>Argumentación y comunicación</b></td><td>Explica con claridad, justifica decisiones y responde preguntas.</td><td>Explica y comunica resultados con claridad.</td><td>Dificultades de organización o argumentación.</td><td>Poco clara; no justifica.</td></tr>
+          <tr><td><b>Trabajo colaborativo</b></td><td>Todos participan, cumplen y deciden en conjunto.</td><td>La mayoría participa y cumple.</td><td>Participación desigual.</td><td>Trabajo de uno o dos integrantes.</td></tr>
+          <tr><td><b>Reflexión del aprendizaje</b></td><td>Identifica aprendizajes, dificultades y mejoras para el futuro.</td><td>Reconoce lo aprendido y algunas dificultades.</td><td>Reflexión general y poco profunda.</td><td>No identifica qué aprendió.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Autoevaluación individual</h3>
+    <ul class="ask">
+      <li>¿Qué concepto del lenguaje algebraico comprendí mejor?</li>
+      <li>¿Qué fue lo más difícil y qué estrategia usé para superarlo?</li>
+      <li>¿Qué aporté al equipo y qué aprendí de mis compañeros?</li>
+      <li>¿Cómo comprobé que nuestra expresión tenía sentido?</li>
+      <li>Si lo hiciera de nuevo, ¿qué haría diferente?</li>
+    </ul>
+    <h3 class="sub">Coevaluación del equipo</h3>
+    <p style="color:var(--ink-soft)">Cada integrante valora a sus compañeros en: participación, cumplimiento, aportes matemáticos, escucha, colaboración y compromiso con el producto final.</p>
+    <blockquote class="quote">Una buena solución matemática no es solo obtener una expresión correcta: es comprender la situación, justificar cómo se construyó, comprobar que funciona, interpretar lo que representa y comunicar las conclusiones.</blockquote>
+  </section>
+</div>
+
+<!-- ============ 6. CONCLUSIONES ============ -->
+<div class="panel" id="conclusiones">
+  <section class="block">
+    <div class="eyebrow">¿QUÉ HEMOS APRENDIDO?</div>
+    <h2 class="sec">El álgebra como herramienta para comprender</h2>
+    <p class="lead">Exploramos el álgebra para representar, analizar y comprender situaciones, no solo como símbolos y procedimientos. Una expresión puede representar relaciones que aparecen en muchos contextos de la vida.</p>
+    <p style="max-width:70ch;color:var(--ink-soft)">Aprendimos también que una representación debe <b>interpretarse y comprobarse</b>: no basta con obtenerla, hay que explicar qué significa y qué información brinda. Y el trabajo colaborativo permitió contrastar formas distintas de interpretar un mismo problema.</p>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Reflexión sobre la experiencia</h3>
+    <div class="grid g2">
+      <div class="card" style="border-top:3px solid var(--teal)"><h4>Ventajas</h4><p>Relaciona el álgebra con situaciones cercanas, favorece la investigación autónoma, la construcción de explicaciones propias, la argumentación y un papel activo del estudiante.</p></div>
+      <div class="card" style="border-top:3px solid var(--amber)"><h4>Posibles dificultades</h4><p>Acceso desigual a internet o dispositivos, dificultad para seleccionar información relevante, tentación de copiar y diferencias en conocimientos previos.</p></div>
+    </div>
+    <h3 class="sub">Cómo mejorar la experiencia</h3>
+    <ul class="clean">
+      <li>Recursos descargables para trabajar sin conexión y videos breves por concepto.</li>
+      <li>Actividades diferenciadas según el nivel y ejemplos guiados de apoyo.</li>
+      <li>Plantillas para construir expresiones y más situaciones contextualizadas.</li>
+    </ul>
+  </section>
+
+  <section class="block">
+    <h3 class="sub" style="margin-top:0">Preguntas para pensar sobre nuestro aprendizaje</h3>
+    <div class="grid g3">
+      <div class="card"><h4>Sobre lo que aprendí</h4><p>¿Qué significa una variable en una situación cotidiana? ¿Cómo la diferencio de una constante? ¿Qué concepto comprendí mejor?</p></div>
+      <div class="card"><h4>Sobre cómo aprendí</h4><p>¿Qué hice cuando no sabía representar algo? ¿Qué recurso me ayudó más? ¿Cómo comprobé mi expresión? ¿Qué error me enseñó algo?</p></div>
+      <div class="card"><h4>Sobre la transferencia</h4><p>¿En qué situación de mi vida o mi comunidad podría usar una expresión algebraica para tomar una decisión real?</p></div>
+    </div>
+    <div class="driving" style="margin-top:24px">
+      <div class="k">UNA ÚLTIMA PREGUNTA</div>
+      <q>Si el álgebra nos permite representar relaciones entre cantidades, ¿qué situaciones de nuestro entorno podríamos comprender mejor si aprendiéramos a expresarlas matemáticamente?</q>
+    </div>
+    <p style="margin-top:20px;color:var(--ink-soft);max-width:70ch">La respuesta no termina con la WebQuest: es una invitación a reconocer que las matemáticas sirven para formular preguntas, analizar situaciones, tomar decisiones y comprender nuestro entorno.</p>
+  </section>
+</div>
+
+</main>
+
+<footer class="wrap">
+  WebQuest · <b>El álgebra en nuestro entorno: representar para comprender</b> · Investigación matemática en equipo
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var fmt = function(n){ return n.toLocaleString('es-CO'); };
+
+  /* ---- tabs ---- */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('#tabs button'));
+  var panels = {};
+  tabs.forEach(function(b){ panels[b.dataset.go] = document.getElementById(b.dataset.go); });
+  var bar = document.getElementById('bar');
+  function show(id){
+    tabs.forEach(function(b){
+      var on = b.dataset.go === id;
+      b.classList.toggle('active', on);
+      panels[b.dataset.go].classList.toggle('active', on);
+    });
+    var idx = tabs.findIndex(function(b){ return b.dataset.go===id; });
+    bar.style.width = ((idx+1)/tabs.length*100) + '%';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  tabs.forEach(function(b){ b.addEventListener('click', function(){ show(b.dataset.go); }); });
+  bar.style.width = (1/tabs.length*100) + '%';
+
+  /* ---- live expression ---- */
+  var C = 3500, F = 8000;
+  var n = document.getElementById('n');
+  var nval = document.getElementById('nval');
+  var sub = document.getElementById('sub');
+  var tot = document.getElementById('tot');
+  var tbody = document.querySelector('#vt tbody');
+  function calcP(x){ return C*x + F; }
+  function build(){
+    tbody.innerHTML='';
+    [1,2,5,10].forEach(function(x){
+      var tr=document.createElement('tr');
+      tr.dataset.x=x;
+      tr.innerHTML='<td>'+x+'</td><td>3.500·'+x+' + 8.000</td><td class="r">'+fmt(calcP(x))+'</td>';
+      tbody.appendChild(tr);
+    });
+  }
+  function update(){
+    var x = +n.value;
+    nval.textContent = x;
+    document.getElementById('xlbl').textContent = x;
+    sub.textContent = 'P = 3.500 · ' + x + ' + 8.000';
+    tot.textContent = fmt(calcP(x));
+    Array.prototype.forEach.call(tbody.children, function(tr){
+      tr.classList.toggle('on', +tr.dataset.x === x);
+    });
+  }
+  build();
+  n.addEventListener('input', update);
+  update();
+
+  /* ---- accordion ---- */
+  document.querySelectorAll('.acc > button').forEach(function(btn){
+    btn.addEventListener('click', function(){ btn.parentElement.classList.toggle('open'); });
+  });
+
+  /* ---- rubric calculator ---- */
+  var crit = [
+    {l:'Investigación y selección de información', w:15},
+    {l:'Comprensión del lenguaje algebraico',     w:15},
+    {l:'Construcción del modelo algebraico',       w:20},
+    {l:'Comprobación e interpretación',            w:15},
+    {l:'Argumentación y comunicación',             w:15},
+    {l:'Trabajo colaborativo',                     w:10},
+    {l:'Reflexión sobre el aprendizaje',           w:10}
+  ];
+  var calc = document.getElementById('calc');
+  var out = calc.querySelector('.calc-out');
+  crit.forEach(function(c,i){
+    var row=document.createElement('div'); row.className='crit';
+    var lv='';
+    for(var s=1;s<=4;s++){ lv += '<button data-i="'+i+'" data-s="'+s+'">'+s+'</button>'; }
+    row.innerHTML = '<div><div class="cl">'+c.l+'</div><div class="cw">peso '+c.w+' %</div></div><div class="levels">'+lv+'</div>';
+    calc.insertBefore(row, out);
+  });
+  var scores = {};
+  function recompute(){
+    var acc=0, done=0;
+    crit.forEach(function(c,i){
+      if(scores[i]){ acc += (scores[i]/4)*c.w; done++; }
+    });
+    var pct = Math.round(acc);               // 0..100
+    var five = (acc/20);                      // 0..5
+    document.getElementById('score').textContent = five.toFixed(1);
+    document.getElementById('pct').textContent = pct + '%';
+    document.getElementById('fx').textContent = done===crit.length
+      ? 'Σ (nivel ÷ 4 × peso) = '+pct+' %'
+      : done+' de '+crit.length+' criterios asignados';
+  }
+  calc.addEventListener('click', function(e){
+    var b = e.target.closest('.levels button'); if(!b) return;
+    var i=b.dataset.i, s=+b.dataset.s;
+    scores[i]=s;
+    b.parentElement.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', +x.dataset.s===s); });
+    recompute();
+  });
+})();
+</script>
+</body>
+</html>
